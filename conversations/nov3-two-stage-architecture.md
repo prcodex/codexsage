@@ -129,3 +129,38 @@ The two-stage architecture is the **most efficient and stable solution**:
 *Conversation: November 3, 2025*  
 *Outcome: Two-Stage Architecture Implemented*  
 *Next: Cron automation*
+
+---
+
+## View Filter System Added
+
+### User Request:
+"on the top bar where written sage premium financial intelligence i would like to have 3 parallel in horizontal one on the side of another. to trigger news flow view, analysis view, and hybrid"
+
+### Implementation:
+Added three view modes to interface:
+
+1. **🔄 Hybrid** - Default view, Twitter cards, all items
+2. **📰 News Flow** - Gmail-style list, NewsBreif only
+3. **📊 Analysis** - Twitter cards, analysis only
+
+### News Flow Design Evolution:
+- Started with Option A (two-column: keywords | bullets)
+- User requested: "lets walkback and use option D instead"
+- Final: Option D - Wide + compact with bullet preview
+
+### Final News Flow Layout:
+- 3 lines per row (1600px wide)
+- Line 1: Sender + Time + [⚠️ Attention] [🗑️ Junk]
+- Line 2: Story title (BOLD, 30% larger font)
+- Line 3: Keywords | First 2 bullets preview (+count)
+
+### Features:
+- ✅ Compact scanning of 112 headlines
+- ✅ Story-specific keywords visible
+- ✅ Bullet preview (click for full in detail panel)
+- ✅ Action buttons (Attention/Junk) for future use
+- ✅ Smooth view switching
+
+### Production Status:
+All three views working, tested, ready for use.
