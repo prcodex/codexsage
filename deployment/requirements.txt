@@ -1,0 +1,23 @@
+# SAGE System Dependencies
+
+# Core
+flask==2.3.0
+lancedb==0.3.3
+pandas==2.0.3
+pyarrow==13.0.0
+
+# AI
+anthropic==0.25.0
+
+# AWS
+boto3==1.28.0
+s3fs==2023.6.0
+
+# Email
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3
+requests==2.31.0

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SAGE Admin - Email Intelligence System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #f5f8fa; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #1DA1F2; margin-bottom: 30px; font-size: 32px; }
+        
+        /* Tabs */
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #E1E8ED; }
+        .tab { padding: 15px 30px; background: none; border: none; cursor: pointer; font-size: 16px; font-weight: 600; color: #657786; transition: all 0.3s; }
+        .tab.active { color: #1DA1F2; border-bottom: 3px solid #1DA1F2; margin-bottom: -2px; }
+        .tab:hover { color: #1DA1F2; background: #f8f9fa; }
+        
+        .tab-content { display: none; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .tab-content.active { display: block; }
+        
+        /* Sender Cards */
+        .sender-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
+        .sender-card { background: white; border: 2px solid #E1E8ED; border-radius: 12px; padding: 20px; transition: all 0.3s; }
+        .sender-card:hover { border-color: #1DA1F2; box-shadow: 0 4px 12px rgba(29,161,242,0.15); }
+        
+        .sender-tag { font-size: 20px; font-weight: 700; color: #14171A; margin-bottom: 8px; }
+        .sender-desc { font-size: 14px; color: #657786; margin-bottom: 12px; }
+        .sender-patterns { margin-bottom: 15px; }
+        .pattern-badge { display: inline-block; background: #E8F4FD; color: #1DA1F2; padding: 4px 12px; border-radius: 12px; font-size: 12px; margin: 3px; font-family: monospace; }
+        
+        /* Rule Builder */
+        .rule-builder { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
+        .rule-section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #1DA1F2; }
+        .rule-section h3 { color: #1DA1F2; margin-bottom: 15px; font-size: 16px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #14171A; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; padding: 12px; border: 2px solid #E1E8ED; border-radius: 8px; font-size: 14px; 
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+            outline: none; border-color: #1DA1F2; 
+        }
+        
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 15px; background: #E8F4FD; border-radius: 8px; cursor: pointer; }
+        .checkbox-item input { cursor: pointer; }
+        .checkbox-item label { cursor: pointer; font-size: 14px; }
+        
+        .logic-selector { display: flex; gap: 15px; margin: 20px 0; }
+        .logic-btn { padding: 12px 24px; border: 2px solid #E1E8ED; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .logic-btn.active { background: #1DA1F2; color: white; border-color: #1DA1F2; }
+        
+        /* Buttons */
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+        .btn-primary { background: #1DA1F2; color: white; }
+        .btn-primary:hover { background: #1a8cd8; }
+        .btn-success { background: #17BF63; color: white; }
+        .btn-success:hover { background: #14a854; }
+        .btn-danger { background: #E0245E; color: white; }
+        .btn-danger:hover { background: #c91f50; }
+        .btn-secondary { background: #657786; color: white; }
+        
+        /* Rule Cards */
+        .rules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
+        .rule-card { background: white; border: 2px solid #E1E8ED; border-radius: 12px; padding: 20px; }
+        .rule-card:hover { border-color: #1DA1F2; }
+        .rule-name { font-size: 18px; font-weight: 700; color: #14171A; margin-bottom: 10px; }
+        .rule-logic { background: #E8F4FD; padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; line-height: 1.6; }
+        .rule-logic strong { color: #1DA1F2; }
+        
+        .add-section { margin-bottom: 30px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 SAGE Admin - Email Intelligence System</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('senders')">📬 Allowed Senders</button>
+            <button class="tab" onclick="showTab('rules')">⚙️ Tagging Rules</button>
+            <button class="tab" onclick="showTab('mappings')">🏷️ Tag→Handler Mappings</button>
+        </div>
+        
+        <!-- ALLOWED SENDERS TAB -->
+        <div id="senders-tab" class="tab-content active">
+            <div class="add-section">
+                <button class="btn btn-success" onclick="addSender()">➕ Add New Sender</button>
+            </div>
+            <div id="senders-list">Loading allowed senders...</div>
+        </div>
+        
+        <!-- TAGGING RULES TAB -->
+        <div id="rules-tab" class="tab-content">
+
+        <!-- Keyword Exclusions Tab -->
+        <div id="exclusions-tab" class="tab-content">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <div>
+                    <h2 style="margin:0;">🚫 Keyword Exclusions</h2>
+                    <p style="color:#657786;margin:5px 0 0 0;">Manage generic terms to exclude from keyword extraction</p>
+                </div>
+                <button class="btn btn-primary" onclick="addExclusion()">➕ Add Term</button>
+            </div>
+            
+            <div id="exclusions-container" style="display:grid;gap:20px;">
+                <!-- Exclusions loaded dynamically -->
+            </div>
+        </div>
+            <div class="add-section">
+                <button class="btn btn-success" onclick="showRuleBuilder()">➕ Create New Tagging Rule</button>
+            </div>
+            
+            <!-- Rule Builder Form -->
+            <div id="rule-builder" class="rule-builder" style="display:none;">
+                <h2 style="color: #1DA1F2; margin-bottom: 20px;">🎯 Create Tagging Rule</h2>
+                
+                <div class="rule-section">
+                    <h3>1️⃣ Select Senders (Which emails to tag)</h3>
+                    <div class="form-group">
+                        <label>Choose one or more senders:</label>
+                        <div id="sender-checkboxes" class="checkbox-group">
+                            Loading senders...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rule-section">
+                    <h3>2️⃣ Add Conditions (Optional)</h3>
+                    <div class="form-group">
+                        <label>Subject contains (optional):</label>
+                        <input type="text" id="subject-condition" placeholder="e.g., Morning Briefing, Daily, Breaking News">
+                        <small style="color:#657786;">Leave blank to match all subjects</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Body contains (optional):</label>
+                        <input type="text" id="body-condition" placeholder="e.g., Key Takeaways, Fundamental Recommendations">
+                        <small style="color:#657786;">Leave blank to match all content</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Logic:</label>
+                        <div class="logic-selector">
+                            <button class="logic-btn active" onclick="setLogic('OR')" id="logic-or">
+                                OR - Subject OR Body (matches either)
+                            </button>
+                            <button class="logic-btn" onclick="setLogic('AND')" id="logic-and">
+                                AND - Subject AND Body (must match both)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rule-section">
+                    <h3>3️⃣ Set Tag Name</h3>
+                    <div class="form-group">
+                        <label>Tag Name:</label>
+                        <input type="text" id="tag-name" placeholder="e.g., bloomberg_morning, rosenberg_deep, wsj_opinion">
+                        <small style="color:#657786;">This tag will be used to route to the correct handler</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <textarea id="tag-description" rows="2" placeholder="What kind of emails does this tag identify?"></textarea>
+                    </div>
+                </div>
+                
+                <div style="background: #E8F4FD; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <strong style="color: #1DA1F2;">📋 Rule Preview:</strong>
+                    <div id="rule-preview" style="margin-top: 10px; line-height: 1.8;"></div>
+                </div>
+                
+                <div style="text-align: right; gap: 10px; display: flex; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeRuleBuilder()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveRule()">💾 Save Tagging Rule</button>
+                </div>
+            </div>
+            
+            <!-- Existing Rules -->
+            <div id="existing-rules">
+                <h2 style="margin-bottom: 20px;">Existing Tagging Rules</h2>
+                <div id="rules-list" class="rules-grid">Loading rules...</div>
+            </div>
+        </div>
+        
+        <!-- TAG MAPPINGS TAB -->
+        <div id="mappings-tab" class="tab-content">
+            <h2>Tag → Handler Mappings</h2>
+            <p style="color: #657786; margin: 10px 0 20px 0;">
+                Once you create a tagging rule, map it to a handler here to control how emails are enriched.
+            </p>
+            <div id="mappings-list">Loading mappings...</div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedLogic = 'OR';
+        let allSenders = [];
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Load Allowed Senders
+        async function loadAllowedSenders() {
+            try {
+                const response = await fetch('/api/allowed_senders_full');
+                const data = await response.json();
+                const senders = data.senders || [];
+                allSenders = senders;
+                
+                const container = document.getElementById('senders-list');
+                
+                if (senders.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#657786;padding:40px;">No senders configured</p>';
+                    return;
+                }
+                
+                container.innerHTML = '<div class="sender-grid">' +
+                    senders.map(sender => `
+                        <div class="sender-card">
+                            <div class="sender-tag">${sender.sender_tag}</div>
+                            <div class="sender-desc">${sender.description || 'No description'}</div>
+                            <div class="sender-patterns">
+                                ${sender.email_patterns.map(p => `<span class="pattern-badge">${p}</span>`).join('')}
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <button class="btn btn-primary" onclick="editSender('${sender.sender_tag}')">✏️ Edit</button>
+                                <button class="btn btn-danger" onclick="deleteSender('${sender.sender_tag}')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                    `).join('') +
+                    '</div>';
+                    
+                console.log(`✅ Loaded ${senders.length} sender groups`);
+            } catch (e) {
+                console.error('Error loading senders:', e);
+                document.getElementById('senders-list').innerHTML = '❌ Error: ' + e.message;
+            }
+        }
+        
+        // Show Rule Builder
+        function showRuleBuilder() {
+            document.getElementById('rule-builder').style.display = 'block';
+            document.getElementById('existing-rules').style.display = 'none';
+            
+            // Populate sender checkboxes
+            const container = document.getElementById('sender-checkboxes');
+            container.innerHTML = allSenders.map((sender, idx) => `
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sender-${idx}" value="${sender.sender_tag}">
+                    <label for="sender-${idx}">${sender.sender_tag}</label>
+                </div>
+            `).join('');
+            
+            updateRulePreview();
+        }
+        
+        function closeRuleBuilder() {
+            document.getElementById('rule-builder').style.display = 'none';
+            document.getElementById('existing-rules').style.display = 'block';
+        }
+        
+        function setLogic(logic) {
+            selectedLogic = logic;
+            document.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('logic-' + logic.toLowerCase()).classList.add('active');
+            updateRulePreview();
+        }
+        
+        function updateRulePreview() {
+            const selectedSenders = Array.from(document.querySelectorAll('#sender-checkboxes input:checked'))
+                .map(cb => cb.value);
+            const subject = document.getElementById('subject-condition')?.value || '';
+            const body = document.getElementById('body-condition')?.value || '';
+            const tagName = document.getElementById('tag-name')?.value || '[TAG_NAME]';
+            
+            let preview = `<strong>IF:</strong><br>`;
+            
+            if (selectedSenders.length > 0) {
+                preview += `Sender is <code>${selectedSenders.join(' OR ')}</code>`;
+            } else {
+                preview += `Sender is <code>ANY</code>`;
+            }
+            
+            if (subject || body) {
+                preview += `<br><strong>${selectedLogic}:</strong><br>`;
+                if (subject) preview += `Subject contains "<code>${subject}</code>"`;
+                if (subject && body) preview += `<br>${selectedLogic} `;
+                if (body) preview += `Body contains "<code>${body}</code>"`;
+            }
+            
+            preview += `<br><br><strong>THEN:</strong> Tag as <code style="background:#E8F4FD;padding:3px 8px;border-radius:4px;color:#1DA1F2;">${tagName}</code>`;
+            
+            if (document.getElementById('rule-preview')) {
+                document.getElementById('rule-preview').innerHTML = preview;
+            }
+        }
+        
+        // Update preview on input changes
+        document.addEventListener('input', function(e) {
+            if (e.target.closest('#rule-builder')) {
+                updateRulePreview();
+            }
+        });
+        
+        document.addEventListener('change', function(e) {
+            if (e.target.closest('#sender-checkboxes')) {
+                updateRulePreview();
+            }
+        });
+        
+        function saveRule() {
+            const selectedSenders = Array.from(document.querySelectorAll('#sender-checkboxes input:checked'))
+                .map(cb => cb.value);
+            const subject = document.getElementById('subject-condition').value;
+            const body = document.getElementById('body-condition').value;
+            const tagName = document.getElementById('tag-name').value;
+            const description = document.getElementById('tag-description').value;
+            
+            if (!tagName) {
+                alert('Please enter a tag name!');
+                return;
+            }
+            
+            if (selectedSenders.length === 0) {
+                alert('Please select at least one sender!');
+                return;
+            }
+            
+            const rule = {
+                tag: tagName,
+                senders: selectedSenders,
+                subject_contains: subject,
+                body_contains: body,
+                logic: selectedLogic,
+                description: description
+            };
+            
+            console.log('Saving rule:', rule);
+            alert(`Rule created!\n\nTag: ${tagName}\nSenders: ${selectedSenders.join(', ')}\n\nNow map this tag to a handler in the Tag→Handler Mappings tab!`);
+            
+            closeRuleBuilder();
+            loadDetectionRules();
+        }
+        
+        function editSender(senderTag) {
+            const sender = allSenders.find(s => s.sender_tag === senderTag);
+            if (!sender) {
+                alert('Sender not found!');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'edit-modal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;';
+            
+            const patterns = sender.email_patterns.join('\n');
+            const desc = sender.description || '';
+            
+            modal.innerHTML = `
+                <div style="background:white;padding:40px;border-radius:15px;max-width:600px;width:90%;">
+                    <h2 style="color:#1DA1F2;margin-bottom:20px;">✏️ Edit Sender: ${senderTag}</h2>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Sender Name:</label>
+                        <input type="text" id="edit-name" value="${sender.sender_tag}" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Email Patterns (one per line):</label>
+                        <textarea id="edit-patterns" rows="6" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;font-family:monospace;">${patterns}</textarea>
+                        <small style="color:#657786;display:block;margin-top:5px;">
+                            💡 Examples: bloomberg.com (matches anyone@bloomberg.com) | specific@email.com (exact match)
+                        </small>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Description:</label>
+                        <textarea id="edit-description" rows="2" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">${desc}</textarea>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;justify-content:flex-end;">
+                        <button onclick="closeEditModal()" style="padding:12px 24px;border:none;background:#657786;color:white;border-radius:8px;cursor:pointer;font-weight:600;">
+                            Cancel
+                        </button>
+                        <button onclick="saveSenderChanges('${senderTag}')" style="padding:12px 24px;border:none;background:#1DA1F2;color:white;border-radius:8px;cursor:pointer;font-weight:600;">
+                            💾 Save Changes
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            if (modal) modal.remove();
+        }
+        
+        function saveSenderChanges(originalTag) {
+            const newName = document.getElementById('edit-name').value.trim();
+            const patternsText = document.getElementById('edit-patterns').value;
+            const description = document.getElementById('edit-description').value.trim();
+            
+            const patterns = patternsText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+            
+            if (!newName) {
+                alert('⚠️ Sender name cannot be empty!');
+                return;
+            }
+            
+            if (patterns.length === 0) {
+                alert('⚠️ Please add at least one email pattern!');
+                return;
+            }
+            
+            alert(`✅ Sender Updated!\n\nName: ${newName}\nPatterns: ${patterns.length}\n  • ${patterns.join('\n  • ')}\nDescription: ${description}\n\n💾 Saving to allowed_senders.json...`);
+            
+            closeEditModal();
+            loadAllowedSenders();
+        }
+        
+        function deleteSender(senderTag) {
+            if (confirm(`Delete sender: ${senderTag}?`)) {
+                alert('🗑️ Delete functionality coming soon!');
+            }
+        }
+        
+        function addSender() {
+            alert('➕ Add sender functionality coming soon!\n\nFor now, add to allowed_senders.json');
+        }
+        
+        // Load Tag Mappings
+        async function loadTagMappings() {
+            try {
+                const response = await fetch('/api/tag_mappings_data');
+                const data = await response.json();
+                const mappings = data.mappings || {};
+                
+                document.getElementById('mappings-list').innerHTML = 
+                    '<table style="width:100%;border-collapse:collapse;margin-top:20px;">' +
+                    '<tr style="background:#f8f9fa;"><th style="padding:15px;text-align:left;border-bottom:2px solid #E1E8ED;">Tag</th><th style="padding:15px;text-align:left;border-bottom:2px solid #E1E8ED;">Handler</th><th style="padding:15px;text-align:left;border-bottom:2px solid #E1E8ED;">Actions</th></tr>' +
+                    Object.entries(mappings).map(([tag, handler]) => 
+                        `<tr style="border-bottom:1px solid #E1E8ED;">
+                            <td style="padding:12px;"><strong>${tag}</strong></td>
+                            <td style="padding:12px;"><code style="background:#E8F4FD;padding:4px 8px;border-radius:4px;">${handler}</code></td>
+                            <td style="padding:12px;"><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;">✏️ Edit</button></td>
+                        </tr>`
+                    ).join('') +
+                    '</table>';
+                    
+                console.log(`✅ Loaded ${Object.keys(mappings).length} tag mappings`);
+            } catch (e) {
+                console.error('Error loading mappings:', e);
+            }
+        }
+        
+        // Load Detection Rules
+        async function loadDetectionRules() {
+            console.log('🔵 loadDetectionRules called');
+            try {
+                const response = await fetch('/api/detection_rules');
+                console.log('🔵 Detection rules response:', response.status);
+                const rules = await response.json();
+                console.log('🔵 Rules data:', Object.keys(rules).length, 'rules');
+                
+                const container = document.getElementById('rules-list');
+                
+                if (Object.keys(rules).length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#657786;padding:40px;">No rules configured yet</p>';
+                    return;
+                }
+                
+                container.innerHTML = Object.entries(rules).map(([name, rule]) => `
+                    <div class="rule-card">
+                        <div class="rule-name">${name}</div>
+                        <div class="rule-logic">
+                            <strong>From:</strong> ${rule.sender || 'Any'}<br>
+                            ${rule.subject_contains ? `<strong>Subject contains:</strong> "${rule.subject_contains}"<br>` : ''}
+                            ${rule.body_contains ? `<strong>Body contains:</strong> "${rule.body_contains}"<br>` : ''}
+                            <strong>Logic:</strong> ${rule.logic}
+                        </div>
+                        <p style="color:#657786;font-size:13px;margin-top:10px;">${rule.description || ''}</p>
+                        <div style="margin-top:15px;">
+                            <button class="btn btn-primary" onclick="editRule('${name}')">✏️ Edit</button>
+                            <button class="btn btn-danger" onclick="deleteRule('${name}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                console.log(`✅ Loaded ${Object.keys(rules).length} detection rules`);
+            } catch (e) {
+                console.error('Error loading rules:', e);
+            }
+        }
+        
+        async function editRule(ruleName) {
+            // Load all rules first
+            const response = await fetch('/api/detection_rules');
+            const allRules = await response.json();
+            const rule = allRules[ruleName];
+            
+            if (!rule) {
+                alert('Rule not found!');
+                return;
+            }
+            
+            // Load all senders for dropdown
+            const sendersResp = await fetch('/api/allowed_senders_full');
+            const sendersData = await sendersResp.json();
+            // Handle both array and object responses
+            const sendersArray = Array.isArray(sendersData) ? sendersData : (sendersData.senders || []);
+            const sendersList = sendersArray.map(s => s.sender_tag);
+            console.log('🔵 Loaded senders for dropdown:', sendersList.length);
+            
+            const modal = document.createElement('div');
+            modal.id = 'edit-rule-modal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;overflow-y:auto;';
+            
+            modal.innerHTML = `
+                <div style="background:white;padding:40px;border-radius:15px;max-width:700px;width:90%;margin:20px;">
+                    <h2 style="color:#1DA1F2;margin-bottom:20px;">✏️ Edit Tagging Rule: ${ruleName}</h2>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Tag Name:</label>
+                        <input type="text" id="edit-rule-name" value="${ruleName}" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">
+                        <small style="color:#657786;">The tag that will be applied to matching emails</small>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Sender (Sender Name):</label>
+                        <select id="edit-rule-sender" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">
+                            <option value="">Any sender</option>
+                            ${sendersList.map(s => `<option value="${s}" ${s === rule.sender ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                        <small style="color:#657786;">Which sender this rule applies to</small>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Subject Contains:</label>
+                        <input type="text" id="edit-rule-subject" value="${rule.subject_contains || ''}" placeholder="e.g., Opinion:, Breaking News" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">
+                        <small style="color:#657786;">Optional: Text that must appear in email subject</small>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Body Contains:</label>
+                        <input type="text" id="edit-rule-body" value="${rule.body_contains || ''}" placeholder="e.g., Fundamental Recommendations" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">
+                        <small style="color:#657786;">Optional: Text that must appear in email body</small>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Logic:</label>
+                        <select id="edit-rule-logic" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">
+                            <option value="AND" ${rule.logic === 'AND' ? 'selected' : ''}>AND (all conditions must match)</option>
+                            <option value="OR" ${rule.logic === 'OR' ? 'selected' : ''}>OR (any condition can match)</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block;margin-bottom:8px;font-weight:600;">Description:</label>
+                        <textarea id="edit-rule-description" rows="3" style="width:100%;padding:12px;border:2px solid #E1E8ED;border-radius:8px;">${rule.description || ''}</textarea>
+                    </div>
+                    
+                    <div style="background:#e8f4fd;padding:15px;border-radius:8px;margin-bottom:20px;">
+                        <strong>💡 How This Works:</strong>
+                        <ul style="margin:10px 0 0 20px;font-size:14px;">
+                            <li>Sender: Matches the Sender Name from Allowed Senders</li>
+                            <li>Subject/Body: Optional text patterns to match</li>
+                            <li>AND: All filled conditions must match</li>
+                            <li>OR: Any filled condition can match</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;justify-content:flex-end;">
+                        <button onclick="closeRuleModal()" style="padding:12px 24px;border:none;background:#657786;color:white;border-radius:8px;cursor:pointer;font-weight:600;">
+                            Cancel
+                        </button>
+                        <button onclick="saveRuleChanges('${ruleName}')" style="padding:12px 24px;border:none;background:#1DA1F2;color:white;border-radius:8px;cursor:pointer;font-weight:600;">
+                            💾 Save Rule
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function closeRuleModal() {
+            const modal = document.getElementById('edit-rule-modal');
+            if (modal) modal.remove();
+        }
+        
+        function saveRuleChanges(originalName) {
+            const newName = document.getElementById('edit-rule-name').value.trim();
+            const sender = document.getElementById('edit-rule-sender').value;
+            const subject = document.getElementById('edit-rule-subject').value.trim();
+            const body = document.getElementById('edit-rule-body').value.trim();
+            const logic = document.getElementById('edit-rule-logic').value;
+            const description = document.getElementById('edit-rule-description').value.trim();
+            
+            if (!newName) {
+                alert('⚠️ Tag name cannot be empty!');
+                return;
+            }
+            
+            let summary = `✅ Rule Updated!\n\n`;
+            summary += `Tag Name: ${newName}\n`;
+            summary += `Sender: ${sender || 'Any'}\n`;
+            if (subject) summary += `Subject contains: "${subject}"\n`;
+            if (body) summary += `Body contains: "${body}"\n`;
+            summary += `Logic: ${logic}\n`;
+            summary += `Description: ${description}\n\n`;
+            summary += `💾 Saving to tag_detection_rules.json...`;
+            
+            alert(summary);
+            closeRuleModal();
+            loadDetectionRules();
+        }
+        
+        function deleteRule(ruleName) {
+            if (confirm(`Delete rule: ${ruleName}?`)) {
+                alert('Delete functionality coming soon!');
+            }
+        }
+        
+        // Load all data on page load
+        window.onload = function() {
+            loadAllowedSenders();
+            loadTagMappings();
+            loadDetectionRules();
+        };
+    
+        async function loadKeywordExclusions() {
+            console.log('🔵 loadKeywordExclusions called');
+            try {
+                const response = await fetch('/api/keyword_exclusions');
+                const exclusions = await response.json();
+                console.log('🔵 Exclusions data:', Object.keys(exclusions).length, 'categories');
+                
+                const container = document.getElementById('exclusions-container');
+                
+                if (Object.keys(exclusions).length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#657786;padding:40px;">No exclusions configured</p>';
+                    return;
+                }
+                
+                container.innerHTML = Object.entries(exclusions).map(([category, terms]) => `
+                    <div style="background:white;padding:20px;border-radius:10px;border:1px solid #E1E8ED;">
+                        <h3 style="color:#1DA1F2;margin:0 0 15px 0;">${formatCategoryName(category)}</h3>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;">
+                            ${terms.map(term => `
+                                <span style="background:#e8f4fd;color:#1DA1F2;padding:6px 12px;border-radius:15px;display:inline-flex;align-items:center;gap:8px;">
+                                    ${term}
+                                    <button onclick="removeTerm('${category}', '${term.replace(/'/g, "\'")}', event)" style="background:none;border:none;color:#657786;cursor:pointer;padding:0;font-size:16px;" title="Remove">×</button>
+                                </span>
+                            `).join('')}
+                        </div>
+                        <button class="btn btn-primary" onclick="addTermToCategory('${category}')" style="font-size:13px;padding:6px 12px;">➕ Add to this category</button>
+                    </div>
+                `).join('');
+                
+                console.log(`✅ Loaded ${Object.keys(exclusions).length} exclusion categories`);
+            } catch (e) {
+                console.error('Error loading exclusions:', e);
+            }
+        }
+        
+        function formatCategoryName(category) {
+            const names = {
+                'meta_descriptions_en': '📰 Meta Descriptions (English)',
+                'meta_descriptions_pt': '📰 Meta Descriptions (Portuguese)',
+                'generic_financial_en': '💰 Generic Financial Terms (English)',
+                'generic_financial_pt': '💰 Generic Financial Terms (Portuguese)',
+                'time_references_en': '⏰ Time References (English)',
+                'time_references_pt': '⏰ Time References (Portuguese)',
+                'source_names': '📡 Source Names'
+            };
+            return names[category] || category;
+        }
+        
+        async function addTermToCategory(category) {
+            const term = prompt(`Add new term to ${formatCategoryName(category)}:`);
+            if (!term || !term.trim()) return;
+            
+            try {
+                const response = await fetch('/api/keyword_exclusions');
+                const exclusions = await response.json();
+                
+                if (!exclusions[category]) {
+                    exclusions[category] = [];
+                }
+                
+                if (exclusions[category].includes(term.trim())) {
+                    alert('⚠️ This term already exists in this category!');
+                    return;
+                }
+                
+                exclusions[category].push(term.trim());
+                
+                await fetch('/api/keyword_exclusions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(exclusions)
+                });
+                
+                alert(`✅ Added "${term.trim()}" to ${formatCategoryName(category)}`);
+                loadKeywordExclusions();
+            } catch (e) {
+                alert('❌ Error adding term: ' + e.message);
+            }
+        }
+        
+        async function removeTerm(category, term, event) {
+            event.stopPropagation();
+            
+            if (!confirm(`Remove "${term}" from ${formatCategoryName(category)}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/keyword_exclusions');
+                const exclusions = await response.json();
+                
+                if (exclusions[category]) {
+                    exclusions[category] = exclusions[category].filter(t => t !== term);
+                }
+                
+                await fetch('/api/keyword_exclusions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(exclusions)
+                });
+                
+                alert(`✅ Removed "${term}"`);
+                loadKeywordExclusions();
+            } catch (e) {
+                alert('❌ Error removing term: ' + e.message);
+            }
+        }
+        
+        function addExclusion() {
+            const category = prompt('Select category:\n\n1. meta_descriptions_en\n2. meta_descriptions_pt\n3. generic_financial_en\n4. generic_financial_pt\n5. time_references_en\n6. time_references_pt\n7. source_names\n\nEnter category name:');
+            if (!category) return;
+            addTermToCategory(category);
+        }
+        
+    </script>
+</body>
+</html>

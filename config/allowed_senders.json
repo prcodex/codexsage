@@ -1,0 +1,196 @@
+[
+  {
+    "sender_tag": "Goldman Sachs",
+    "email_patterns": [
+      "goldmansachs.com",
+      "gs.com",
+      "janhatzius@gs.com"
+    ],
+    "description": "Investment bank research and economic analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Bloomberg",
+    "email_patterns": [
+      "bloomberg.com",
+      "bloombergbusiness.com"
+    ],
+    "description": "Financial news, market briefings, and breaking news",
+    "active": true
+  },
+  {
+    "sender_tag": "WSJ",
+    "email_patterns": [
+      "wsj.com",
+      "dowjones.com",
+      "emma.tucker@wsj.com",
+      "email.wsj.com"
+    ],
+    "description": "Wall Street Journal news and opinion",
+    "active": true
+  },
+  {
+    "sender_tag": "Barron's",
+    "email_patterns": [
+      "barrons.com"
+    ],
+    "description": "Investment news and weekend briefings",
+    "active": true
+  },
+  {
+    "sender_tag": "Financial Times",
+    "email_patterns": [
+      "ft.com"
+    ],
+    "description": "Global financial news and analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Business Insider",
+    "email_patterns": [
+      "businessinsider.com"
+    ],
+    "description": "Business news and daily briefings",
+    "active": true
+  },
+  {
+    "sender_tag": "Reuters",
+    "email_patterns": [
+      "reuters.com"
+    ],
+    "description": "Global news wire service",
+    "active": true
+  },
+  {
+    "sender_tag": "CNBC",
+    "email_patterns": [
+      "cnbc.com"
+    ],
+    "description": "Business news television network",
+    "active": true
+  },
+  {
+    "sender_tag": "Itau",
+    "email_patterns": [
+      "itau.com.br",
+      "itau-bba.com"
+    ],
+    "description": "Brazilian bank - macro and market analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Rosenberg Research",
+    "email_patterns": [
+      "rosenbergresearch.com"
+    ],
+    "description": "Independent macroeconomic research",
+    "active": true
+  },
+  {
+    "sender_tag": "Estad\u00e3o",
+    "email_patterns": [
+      "estadao.com.br",
+      "grupoestado.com.br"
+    ],
+    "description": "Brazilian newspaper - Portuguese",
+    "active": true
+  },
+  {
+    "sender_tag": "Folha",
+    "email_patterns": [
+      "folha.com.br",
+      "uol.com.br"
+    ],
+    "description": "Brazilian newspaper - Portuguese",
+    "active": true
+  },
+  {
+    "sender_tag": "Torsten Slok",
+    "email_patterns": [
+      "torsten.slok@apollo.com",
+      "apollo.com"
+    ],
+    "description": "Apollo Global - Chief Economist",
+    "active": true
+  },
+  {
+    "sender_tag": "John Cochrane",
+    "email_patterns": [
+      "johnhcochrane@substack.com",
+      "grumpy-economist.com"
+    ],
+    "description": "The Grumpy Economist - Academic analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Adam Tooze",
+    "email_patterns": [
+      "adamtooze.substack.com",
+      "chartbook.substack.com"
+    ],
+    "description": "Chartbook - Economic history and analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Luke Gromen",
+    "email_patterns": [
+      "luke@forestforest.com",
+      "lukegromen.substack.com"
+    ],
+    "description": "Forest for the Trees - Macro strategy",
+    "active": true
+  },
+  {
+    "sender_tag": "Topdown Charts",
+    "email_patterns": [
+      "topdowncharts.substack.com",
+      "callum@topdowncharts.com"
+    ],
+    "description": "Global macro charts and analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Yascha Mounk",
+    "email_patterns": [
+      "persuasion.community",
+      "yascha@persuasion.community"
+    ],
+    "description": "Persuasion - Politics and culture",
+    "active": true
+  },
+  {
+    "sender_tag": "Matt Stoller",
+    "email_patterns": [
+      "matt.stoller@substack.com",
+      "mattstoller.substack.com"
+    ],
+    "description": "BIG - Monopoly and competition analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Capital Flows",
+    "email_patterns": [
+      "capital-flows.com",
+      "capitalflows.substack.com"
+    ],
+    "description": "International capital flow analysis",
+    "active": true
+  },
+  {
+    "sender_tag": "Axios",
+    "email_patterns": [
+      "axios.com"
+    ],
+    "description": "Smart brevity news",
+    "active": true
+  },
+  {
+    "sender_tag": "Personal",
+    "email_patterns": [
+      "pedrobpribeiro@gmail.com",
+      "pedro.ribeiro@jpmorgan.com"
+    ],
+    "description": "Your personal emails",
+    "active": true
+  }
+]

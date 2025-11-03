@@ -1,0 +1,114 @@
+{
+  "Goldman Sachs": {
+    "sender": "Goldman Sachs",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "All Goldman Sachs emails from @gs.com"
+  },
+  "Itau": {
+    "sender": "Itau",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "Itau bank emails from itau domains"
+  },
+  "Rosenberg_EM": {
+    "sender": "Rosenberg Research",
+    "subject_contains": "Early Morning with Dave",
+    "body_contains": "Fundamental Recommendations",
+    "logic": "OR",
+    "description": "Rosenberg deep research - triggers on Early Morning in subject OR Fundamental Recs in body"
+  },
+  "Rosenberg Research": {
+    "sender": "Rosenberg Research",
+    "subject_contains": "Breakfast with Dave",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "Rosenberg Breakfast with Dave headlines only"
+  },
+  "Financial Times": {
+    "sender": "Financial Times",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "All Financial Times emails from @ft.com"
+  },
+  "Wall Street Journal": {
+    "sender": "Wall Street Journal",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "All WSJ emails from @wsj.com (non-opinion)"
+  },
+  "WSJ Opinion": {
+    "sender": "Wall Street Journal",
+    "subject_contains": "Opinion:",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "WSJ Opinion articles - subject must contain 'Opinion:'"
+  },
+  "Bloomberg": {
+    "sender": "Bloomberg",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "All Bloomberg emails from @bloomberg domains"
+  },
+  "Bloomberg Breaking": {
+    "sender": "Bloomberg",
+    "subject_contains": "Breaking News:",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "Bloomberg breaking news alerts"
+  },
+  "J.P. Morgan": {
+    "sender": "J.P. Morgan",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "JPMorgan investment bank emails"
+  },
+  "Substack": {
+    "sender": "Substack",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "Generic Substack newsletters"
+  },
+  "John H. Cochrane": {
+    "sender": "John H. Cochrane",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "The Grumpy Economist from johnhcochrane@substack.com"
+  },
+  "Javier Blas": {
+    "sender": "Bloomberg",
+    "subject_contains": "",
+    "body_contains": "Javier Blas, just published a story",
+    "logic": "AND",
+    "description": "Javier Blas author alerts from Bloomberg"
+  },
+  "Tony Pasquariello": {
+    "sender": "Goldman Sachs",
+    "subject_contains": "",
+    "body_contains": "Tony Pasquariello",
+    "logic": "AND",
+    "description": "Tony's market notes from GS"
+  },
+  "Washington Post": {
+    "sender": "Washington Post",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "Washington Post emails"
+  },
+  "Best of Econtwitter": {
+    "sender": "Best of Econtwitter",
+    "subject_contains": "",
+    "body_contains": "",
+    "logic": "AND",
+    "description": "Economics Twitter compilation from Substack"
+  }
+}
